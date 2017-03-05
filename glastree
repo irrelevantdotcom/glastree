@@ -24,8 +24,9 @@ use vars qw/ $source $target $today $yesterday @prunedirs /;
 
 use vars qw/ $opt_usehourminute $opt_today $opt_yesterday /;
 use vars qw/ $opt_help $opt_version /;
+use vars qw/ $opt_resume $opt_verbose /;
 
-my $version = "glastree v1.05 stable, http://igmus.org\n";
+my $version = "glastree v1.06 rob stable, http://igmus.org\n";
 
 main();
 
@@ -35,7 +36,7 @@ sub main
     # handle options
     #
 
-    GetOptions('today=s', 'yesterday=s', 'version', 'help'); #, 'usehourminute!');
+    GetOptions('today=s', 'yesterday=s', 'version', 'help', 'resume', 'verbose'); #, 'usehourminute!');
     
     if ($opt_version)  { print STDERR $version; exit 1; }
 
@@ -53,6 +54,7 @@ sub main
 
     $source = $ARGV [0];
     $target = $ARGV [1];
+
 
     if (not defined $opt_today) {
         $today = sprintf "%4d%02d/%02d", Today();
@@ -127,32 +129,56 @@ sub recurse
         my $today_path     = "$target/$today/$cwd/$file";
         my $yesterday_path = "$target/$yesterday/$cwd/$file";
 
-        if (-l $new_path) {
-            symlink(readlink($new_path), $today_path);
-        }
+	if ((defined $opt_verbose)) {
+	    print STDOUT $new_path; 
+	}
 
-        elsif (-f $new_path)
-        {
-            my $new_stat       = stat $new_path;
-            my $yesterday_stat = stat $yesterday_path;
+	if ((defined $opt_resume) and -e $today_path) {
+	    if ((defined $opt_verbose)) {
+		print STDOUT " - exists, skipped.\n";
+	    }
+	}
+	else
+	{	
+          if (-l $new_path) {
+              symlink(readlink($new_path), $today_path);
+	      if ((defined $opt_verbose)) {
+		print STDOUT " - symlink created\n";
+	      }
+          }
 
-            if (not defined($yesterday_stat)
-                or $new_stat->mtime != $yesterday_stat->mtime
-                or $new_stat->size  != $yesterday_stat->size)
-            {
-                copystat($new_path, $today_path, $new_stat);
-            }
-            else {
-                link($yesterday_path, $today_path);
-            }
-        }	    
+          elsif (-f $new_path)
+          {
+              my $new_stat       = stat $new_path;
+              my $yesterday_stat = stat $yesterday_path;
 
-        else {
+              if (not defined($yesterday_stat)
+                  or $new_stat->mtime != $yesterday_stat->mtime
+                  or $new_stat->size  != $yesterday_stat->size)
+              {
+                  copystat($new_path, $today_path, $new_stat);
+		  if ((defined $opt_verbose)) {
+			print STDOUT " - new version copied\n";
+  	          }
+              }
+                else {
+                  link($yesterday_path, $today_path);
+		  if ((defined $opt_verbose)) {
+			print STDOUT " - link to yesterday created\n";
+ 		  }
+              }
+          }	    
+
+          else {
+	
             print STDERR "warning: no logic to handle $cwd/$file; skipping\n";
-        }
+          }
+       }
     }
 
-    foreach (@dirs) { recurse("$cwd/$_"); }
+    foreach (@dirs) {
+	 recurse("$cwd/$_"); 
+    }
 }
 
 

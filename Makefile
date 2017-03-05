@@ -23,8 +23,8 @@ test:
 
 install:
 	@perl -e 'eval "use Date::Calc"; \
-	print "Checking for prereq Date::Calc..."; \
-	if ($$@) { print "\nThis program requires the Date::Calc module.\n"; exit 1; } \
+#	print "Checking for prereq Date::Calc..."; \
+#	if ($$@) { print "\nThis program requires the Date::Calc module.\n"; exit 1; } \
 	print " OK\n"; '
 
 	$(INSTALL) -d $(INSTROOT)/$(INSTBIN)
