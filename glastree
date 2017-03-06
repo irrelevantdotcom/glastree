@@ -48,6 +48,8 @@ sub main
         print STDERR "  --today=path         Use path instead of today's date (YYYYMM/DD)\n";
         print STDERR "  --yesterday=path     Use path instead of yesterday's date (YYYYMM/DD)\n";
         print STDERR "  --version            Display version and exit\n";
+        print STDERR "  --verbose            Display files and status during execution\n";
+        print STDERR "  --resume             Skip any files existing at target\n";
         print STDERR "  --help               Display this message and exit\n";
         exit 1;
     }

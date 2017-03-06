@@ -1,4 +1,4 @@
-glastree 1.05 stable
+glastree 1.06 stable
 
 Overview
 
@@ -12,6 +12,8 @@ Overview
   "pdumpfs":http://namazu.org/~satoru/pdumpfs.
 
 Installation
+
+  Requires perl Date::Calc module to be installed
 
   Edit install variables in Makefile, then 'make install' ::
 
@@ -42,6 +44,14 @@ Examples
     # su
     # glastree /home /backup
 
+ 
+  New in 1.06: --resume will skip any files that already exist at the
+			target.  Note that this does NOT check that they
+			are the same, and a crash might leave the file or
+			file being copied at the time in an indeterminate
+			state.
+	      --verbose	lists files as they are being transferred.
+ 
 License
 
   Released into the public domain.  I provide no warranty, accept no
@@ -52,4 +62,6 @@ Contact
   Jeremy Wohl, jeremywohl at the gmail, "code homepage":https://github.com/jeremywohl/glastree.
 
   I appreciate feedback, patches or anecdotes.
+
+Resume and Verbose added by robert@irrelevant.com 2017/03/05.
 
